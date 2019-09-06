@@ -58,11 +58,11 @@ def main (options):
     port = options.port
     #try to open and read the serial port
     try:
-        serialPort = serial.Serial(port)
+        serialPort = serial.Serial(port, timeout=2)
         serialPort.write('TF\r')
         time.sleep(1)
         serData = ''
-        serData += serialPort.read(1)
+        serData += serialPort.read_until()
         serialPort.close()
     except IOError:
         print ("ERROR: Unable to read sensor")
