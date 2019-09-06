@@ -2,7 +2,7 @@
 #	check_watchportT.py
 # 	Copyright 2019 Nathan Safran
 #
-#	This script gets the temperature from a Digi Watchport Temperature Sensor.
+#	This script gets the temperature from a Digi Watchport/T or /H Sensor.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 	
 import sys
 import optparse
-import time
 import re
 import serial
 from serial import Serial
+from usb.core import find as finddev
 
 
 # Display a list of options to be sent to the plugin
@@ -53,6 +53,7 @@ def parse_args():
     return options
 
 def main (options):
+    dev = finddev(idVendor=0x1608, idProduct=0x0305)
     warning = options.warning
     critical = options.critical
     port = options.port
@@ -60,32 +61,37 @@ def main (options):
     try:
         serialPort = serial.Serial(port, timeout=2)
         serialPort.write('TF\r')
-        time.sleep(1)
         serData = ''
         serData += serialPort.read_until()
         serialPort.close()
     except IOError:
-        print ("ERROR: Unable to read sensor")
+        print ("ERROR: Unable to read sensor. Is the port correct?")
+        dev.reset()
         sys.exit(3)
     #if it returns nothing exit with unknown
     if (serData == ''):
-        print ("ERROR: Unable to read sensor")
+        print ("ERROR: Unable to read sensor. Is the port correct?")
+        dev.reset()
         sys.exit(3)
     #regex to get the number
-    temp = re.findall("[\d]+.[\d]+",serData)
+    temp = float((re.search("[\d]+.[\d]+",serData)).group(0))
 
     exitcode = 3
     #set the exit code based on reading
-    if (temp > warning):
+    if (temp >= warning and temp < critical):
         exitcode = 1
         print ("WARNING: Temp is at %s F" % temp)
-    if (temp > critical):
+    if (temp >= critical):
         exitcode = 2
         print ("CRITICAL: Temp is at %s F" % temp)
     if (temp < warning):
         exitcode = 0
         print ("OK: Temp is at %s F" % temp)
     #exit
+
+    
+    dev.reset()
+    print "|temp=%s;%s;%s;0;120\n" % (temp,warning,critical)
     sys.exit(exitcode)
     
 #call the things

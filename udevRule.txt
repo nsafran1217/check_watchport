@@ -1,0 +1,1 @@
+SUBSYSTEM=="usb", ATTRS{idProduct}=="0305", ATTRS{serial}=="V72983794-0", ACTION=="add", RUN+="/bin/setfacl -m u:nagios:rw- /dev/$name"
