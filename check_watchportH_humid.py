@@ -74,22 +74,23 @@ def main (options):
         dev.reset()
         sys.exit(3)
     #regex to get the number
-    humidity = float((re.search("[\d]+.[\d]+",serData)).group(0))
+    humidity = int((re.search("[\d]+",serData)).group(0))
 
     exitcode = 3
     #set the exit code based on reading
     if (humidity >= warning and humidity < critical):
         exitcode = 1
-        print ("WARNING:  Humidity is at %s %" % humidity)
+        print ("WARNING:  Humidity is at %s %%" % humidity)
     if (humidity >= critical):
         exitcode = 2
-        print ("CRITICAL: Humidity is at %s %" % humidity)
+        print ("CRITICAL: Humidity is at %s %%" % humidity)
     if (humidity < warning):
         exitcode = 0
-        print ("OK: Humidity is at %s %" % humidity)
+        print ("OK: Humidity is at %s %%" % humidity)
     #exit
   
     dev.reset()
+    #Perfomance Data
     print "|humidity=%s;%s;%s;0;100\n" % (humidity,warning,critical)
     sys.exit(exitcode)
     
