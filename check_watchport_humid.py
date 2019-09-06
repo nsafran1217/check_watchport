@@ -22,7 +22,6 @@ import optparse
 import re
 import serial
 from serial import Serial
-from usb.core import find as finddev
 
 
 # Display a list of options to be sent to the plugin
@@ -53,7 +52,6 @@ def parse_args():
     return options
 
 def main (options):
-    dev = finddev(idVendor=0x1608, idProduct=0x0305)
     warning = options.warning
     critical = options.critical
     port = options.port
@@ -66,12 +64,10 @@ def main (options):
         serialPort.close()
     except IOError:
         print ("ERROR: Unable to read sensor. Is the port correct?")
-        dev.reset()
         sys.exit(3)
     #if it returns nothing exit with unknown
     if (serData == ''):
         print ("ERROR: Unable to read sensor. Is the port correct?")
-        dev.reset()
         sys.exit(3)
     #regex to get the number
     humidity = int((re.search("[\d]+",serData)).group(0))
@@ -89,9 +85,8 @@ def main (options):
         print ("OK: Humidity is at %s %%" % humidity)
     #exit
   
-    dev.reset()
     #Perfomance Data
-    print "|humidity=%s;%s;%s;0;100\n" % (humidity,warning,critical)
+    print ("|humidity=%s;%s;%s;0;100\n" % (humidity,warning,critical))
     sys.exit(exitcode)
     
 #call the things

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-#	check_watchportT.py
+#	check_watchportT_humid.py
 # 	Copyright 2019 Nathan Safran
 #
-#	This script gets the temperature from a Digi Watchport/T or /H Sensor.
+#	This script gets the humidityfrom a Digi Watchport/H Sensor.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ def main (options):
     #try to open and read the serial port
     try:
         serialPort = serial.Serial(port, timeout=2)
-        serialPort.write('TF\r')
+        serialPort.write('H\r')
         serData = ''
         serData += serialPort.read_until()
         serialPort.close()
@@ -74,25 +74,24 @@ def main (options):
         dev.reset()
         sys.exit(3)
     #regex to get the number
-    temp = float((re.search("[\d]+.[\d]+",serData)).group(0))
+    humidity = int((re.search("[\d]+",serData)).group(0))
 
     exitcode = 3
     #set the exit code based on reading
-    if (temp >= warning and temp < critical):
+    if (humidity >= warning and humidity < critical):
         exitcode = 1
-        print ("WARNING: Temp is at %s F" % temp)
-    if (temp >= critical):
+        print ("WARNING:  Humidity is at %s %%" % humidity)
+    if (humidity >= critical):
         exitcode = 2
-        print ("CRITICAL: Temp is at %s F" % temp)
-    if (temp < warning):
+        print ("CRITICAL: Humidity is at %s %%" % humidity)
+    if (humidity < warning):
         exitcode = 0
-        print ("OK: Temp is at %s F" % temp)
+        print ("OK: Humidity is at %s %%" % humidity)
     #exit
-
-    
+  
     dev.reset()
     #Perfomance Data
-    print "|temp=%s;%s;%s;0;120\n" % (temp,warning,critical)
+    print ("|humidity=%s;%s;%s;0;100\n" % (humidity,warning,critical))
     sys.exit(exitcode)
     
 #call the things
