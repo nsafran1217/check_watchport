@@ -1,9 +1,13 @@
-# check_watchportT
+# check_watchport
 Nagios plugin for checking temperature from a watchport sensor.
 
 Add the nagios user to the dailout group so it has access to the serial port.
 
-The normal version should work without modification
+The normal version should work without modification.
+
+check_watchport_temp works with a Watchport/T or Watchport/H.
+
+check_watchport_humid works with the Watchport/H.
 
 # USB version:
 I had a lot of problems with the sensor locking after every read. I wrote the USB versions to reset the device after every check.
