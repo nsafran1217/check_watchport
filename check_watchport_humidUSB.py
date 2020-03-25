@@ -91,7 +91,8 @@ def main (options):
   
     dev.reset()
     #Perfomance Data
-    print ("|humidity=%s;%s;%s;0;100\n" % (humidity,warning,critical))
+    if (humidity <= 100):
+        print ("|humidity=%s;%s;%s;0;100\n" % (humidity,warning,critical))
     sys.exit(exitcode)
     
 #call the things

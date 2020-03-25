@@ -92,7 +92,8 @@ def main (options):
     
     dev.reset()
     #Perfomance Data
-    print ("|temp=%s;%s;%s;0;120\n" % (temp,warning,critical))
+    if (temp <= 130):
+        print ("|temp=%s;%s;%s;0;120\n" % (temp,warning,critical))
     sys.exit(exitcode)
     
 #call the things
